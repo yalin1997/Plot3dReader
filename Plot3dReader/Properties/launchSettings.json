@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Plot3dReader": {
+      "commandName": "Project",
+      "commandLineArgs": "2 4"
+    }
+  }
+}
