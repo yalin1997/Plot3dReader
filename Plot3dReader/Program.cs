@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Plot3dReader
 {
@@ -23,35 +24,52 @@ namespace Plot3dReader
                 string[] splitName = OutputFile.Name.Split("_");
                 if (MeshNumber.Equals(splitName[2].TrimStart('0')) && TargetSecond.Equals(splitName[3].TrimStart('0')))
                 {
+                    string fileMesh = splitName[2].TrimStart('0');
+                    string fileSecond = splitName[3].TrimStart('0');
                     string[] lines = File.ReadAllLines(Folder + @"\" + OutputFile.Name);
-                    for (int l = 0; l < lines.Length; l++)
+                    using (StreamWriter file = new StreamWriter(string.Format("output_M_{0}_S_{1}", fileMesh, fileSecond)))
                     {
-                        if (l > 1)
+                        for (int l = 0; l < lines.Length; l++)
                         {
-                            
-                            string line = lines[l];
-                            //Console.WriteLine(line);
-                            string[] data = line.Split(',');
-                            double x;
-                            double.TryParse(data[0] , out x);
-                            double y;
-                            double.TryParse(data[1], out y);
-                            double z;
-                            double.TryParse(data[2], out z);
-                            double visibility;
-                            double.TryParse(data[3], out visibility);
-                            double HRR;
-                            double.TryParse(data[4], out HRR);
-                            double Temperature;
-                            double.TryParse(data[5], out Temperature);
-                            double velocity;
-                            double.TryParse(data[6], out velocity);
-                            double unknow;
-                            double.TryParse(data[7], out unknow);
-                            if(Temperature > TemperatureThreshold)
+                            if (l > 1)
                             {
-                                Console.WriteLine(Temperature);
-                                Console.WriteLine(String.Format("x , y , z = {0}, {1}, {2}", x , y , z ));
+
+                                string line = lines[l];
+                                //Console.WriteLine(line);
+                                string[] data = line.Split(',');
+                                double x;
+                                double.TryParse(data[0], out x);
+                                double y;
+                                double.TryParse(data[1], out y);
+                                double z;
+                                double.TryParse(data[2], out z);
+                                double visibility;
+                                double.TryParse(data[3], out visibility);
+                                double HRR;
+                                double.TryParse(data[4], out HRR);
+                                double Temperature;
+                                double.TryParse(data[5], out Temperature);
+                                double velocity;
+                                double.TryParse(data[6], out velocity);
+                                double unknow;
+                                double.TryParse(data[7], out unknow);
+                                if (Temperature > TemperatureThreshold)
+                                {
+                                    Console.WriteLine(String.Format("x , y , z = {0}, {1}, {2}", x, y, z));
+                                    Console.WriteLine(Temperature);
+                                    dataModel tempData = new dataModel()
+                                    {
+                                        x = Convert.ToInt32(x),
+                                        y = Convert.ToInt32(y),
+                                        z = Convert.ToInt32(z),
+                                        visibility = visibility,
+                                        HRR = HRR,
+                                        Temperature = Temperature,
+                                        velocity = velocity,
+                                        unknow = unknow
+                                    };
+                                    file.WriteLine(JsonConvert.SerializeObject(tempData));
+                                }
                             }
                         }
                     }
