@@ -16,5 +16,6 @@ namespace Plot3dReader
         public double velocity { get; set; }
         public double unknow { get; set; }
         public List<double> type2QuantityList { get; set; }
+        public List<double> type3QuantityList { get; set; }
     }
 }

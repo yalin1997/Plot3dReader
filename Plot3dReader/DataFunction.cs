@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace Plot3dReader
 {
@@ -84,9 +85,8 @@ namespace Plot3dReader
                 }
             }
         }
-        public static void readType2(string Folder, Dictionary<int, List<dataModel>> smokePointDic)
+        public static void readOtherPlot3D(string Folder, Dictionary<int, List<dataModel>> smokePointDic , int flag)
         {
-            double TemperatureThreshold = 70.0;
             foreach (var OutputFile in ReadFile())
             {
                 string[] splitName = OutputFile.Name.Split("_");
@@ -124,18 +124,37 @@ namespace Plot3dReader
                                 q4, q5, q6, q7, q8
                             }
                         };
+                        findDataModel(smokePointDic[fileSecond], tempData, flag);
                     }
                 }
             }
         }
-        public static void findDataModel(List<dataModel> pointList , dataModel targetData)
+        public static void findDataModel(List<dataModel> pointList , dataModel targetData, int flag)
         {
             foreach(dataModel item in pointList)
             {
                 if(item.x == targetData.x && item.y == targetData.y && item.z == targetData.z)
                 {
-                    item.type2QuantityList = targetData.type2QuantityList;
-                    break;
+                    if (flag.Equals(2))
+                    {
+                        item.type2QuantityList = targetData.type2QuantityList;
+                        break;
+                    }
+                    else
+                    {
+                        item.type3QuantityList = targetData.type2QuantityList;
+                        break;
+                    }
+                }
+            }
+        }
+        public static void writeData(string Folder , Dictionary<int, List<dataModel>> smokePointDic)
+        {
+            foreach(int key in smokePointDic.Keys)
+            {
+                using(StreamWriter file = new StreamWriter(string.Format("output_S_{0}", key)))
+                {
+                    file.Write(JsonConvert.SerializeObject(smokePointDic[key]));
                 }
             }
         }
