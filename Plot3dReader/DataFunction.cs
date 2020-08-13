@@ -148,13 +148,27 @@ namespace Plot3dReader
                 }
             }
         }
-        public static void writeData(string Folder , Dictionary<int, List<dataModel>> smokePointDic)
+        public static void writeForm1Data(string Folder , Dictionary<int, List<dataModel>> smokePointDic)
         {
             foreach(int key in smokePointDic.Keys)
             {
-                using(StreamWriter file = new StreamWriter(string.Format("output_S_{0}", key)))
+                using(StreamWriter file = new StreamWriter(string.Format("output_S_{0}.txt", key)))
                 {
                     file.Write(JsonConvert.SerializeObject(smokePointDic[key]));
+                }
+            }
+        }
+        public static void writeCsvData(string Folder, Dictionary<int, List<dataModel>> smokePointDic)
+        {
+            foreach(int key in smokePointDic.Keys)
+            {
+                using (StreamWriter file = new StreamWriter(string.Format("fireData_output.csv", key)))
+                {
+                    List<dataModel> tempList = smokePointDic[key];
+                    file.Write("time, v1,v2,v3,v4,v5,v6,v7,v8,velocity");
+                    foreach (dataModel item in tempList){
+                        string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}", key, item.x, item.y, item.z, item.visibility,item.HRR, item.Temperature, item.unknow, item.velocity);
+                    }
                 }
             }
         }
